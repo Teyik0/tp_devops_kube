@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: indian-coffee
+  labels:
+    app: indian-coffee
+  namespace: indiancoffee
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: indian-coffee
+  template:
+    metadata:
+      labels:
+        app: indian-coffee
+    spec:
+      containers:
+        - name: indian-coffee
+          image: teyik0/indian-coffee:latest
+          ports:
+            - containerPort: 3000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: indian-coffee
+  namespace: indiancoffee
+spec:
+  selector:
+    app: indian-coffee
+  sessionAffinity: None
+  type: NodePort
+  ports:
+    - port: 8080
+      targetPort: 3000
+      nodePort: 30003

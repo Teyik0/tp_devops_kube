@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-api
+  labels:
+    app: auth-api
+  namespace: api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auth-api
+  template:
+    metadata:
+      labels:
+        app: auth-api
+    spec:
+      containers:
+        - name: auth-api
+          image: teyik0/auth-api:latest
+          ports:
+            - containerPort: 3000
+          env: # Add the env field here
+            - name: DATABASE_URL
+              value: 'postgres://admin:adminpwd@postgresdb:5432/db'
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: auth-api
+  namespace: api
+spec:
+  selector:
+    app: auth-api
+  sessionAffinity: None
+  type: NodePort
+  ports:
+    - port: 8080
+      targetPort: 3000
+      nodePort: 30004
